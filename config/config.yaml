@@ -2,4 +2,4 @@ settings:
   limit_once_run: 10          # 单次拉黑数量，过多会触发平台 api 请求限制
 request:
   rate_limit_interval: 1      # 请求间隔，单位：秒
-  timeout: 5                  # 超市时间，单位：秒
+  timeout: 5                  # 超时时间，单位：秒
