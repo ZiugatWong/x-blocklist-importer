@@ -12,13 +12,15 @@ def main():
     config_settings = config.get("settings", {})
     config_request = config.get("request", {})
 
-    limit_once_run = config_settings.get("limit_once_run", 10)
+    limit_once_run = config_settings.get("limit_once_run", 400)
 
-    rate_limit_interval = config_request.get("rate_limit_interval", 2)
+    rate_limit_interval = config_request.get("rate_limit_interval", 5)
     request_timeout = config_request.get("timeout", 5)
+    request_retry_times = config_request.get("retry_times", 3)
+    request_retry_interval = config_request.get("retry_interval", 5)
 
     log_message(
-        f"已读取 API 请求配置： 请求间隔 {rate_limit_interval} s，超时时间 {request_timeout} s",
+        f"已读取 API 请求配置：请求间隔 {rate_limit_interval} s，超时时间 {request_timeout} s，重试次数 {request_retry_times} 次，重试间隔 {request_retry_interval} s",
         "info",
         Fore.CYAN,
     )
@@ -63,7 +65,7 @@ def main():
     task_list = remaining_ids[:limit_once_run]
 
     log_message(
-        f"剩余 {len(remaining_ids)} 个待屏蔽用戶，本次计划处理 {len(task_list)} 个。",
+        f"剩余 {len(remaining_ids)} 个待屏蔽用戶，本次计划处理 {len(task_list)} 个",
         "info",
         Fore.YELLOW,
     )
@@ -73,7 +75,14 @@ def main():
     pbar = tqdm(task_list, desc="正在批量屏蔽", unit="人", ncols=80)
 
     for uid in pbar:
-        block_user_automated(uid, cj, ct0_value, request_timeout)
+        block_user_automated(
+            uid,
+            cj,
+            ct0_value,
+            request_timeout,
+            request_retry_times,
+            request_retry_interval,
+        )
 
         # 每处理一个，就更新
         save_progress(uid)
