@@ -1,4 +1,5 @@
 import time
+import argparse
 import browser_cookie3
 from tqdm import tqdm
 from utils.logger import log_message, Fore
@@ -7,12 +8,24 @@ from core.blocker import block_user_automated
 
 
 def main():
+
+    # 处理命令行参数
+    parser = argparse.ArgumentParser(description="x-blocklist-importer")
+    parser.add_argument("-b", "--batch-size", type=int, help="本次屏蔽的用户数量")
+    args = parser.parse_args()
+
     # 读取配置
     config = load_config()
     config_settings = config.get("settings", {})
     config_request = config.get("request", {})
 
-    limit_once_run = config_settings.get("limit_once_run", 400)
+    # 如果命令行提供了参数 (args.batch_size 不为 None)，则使用命令行参数
+    # 否则使用配置文件中的 batch_size，如果配置文件也没有，默认设为 400
+    batch_size = (
+        args.batch_size
+        if args.batch_size is not None
+        else config_settings.get("batch_size", 400)
+    )
 
     rate_limit_interval = config_request.get("rate_limit_interval", 5)
     request_timeout = config_request.get("timeout", 5)
@@ -60,9 +73,9 @@ def main():
         start_index = user_ids.index(last_id) + 1
         log_message(f"从上次进度继续，用户：{last_id}", "info", Fore.CYAN)
 
-    # 确定本次运行的实际数量（不超过 limit_once_run）
+    # 确定本次运行的实际数量（不超过 batch_size）
     remaining_ids = user_ids[start_index:]
-    task_list = remaining_ids[:limit_once_run]
+    task_list = remaining_ids[:batch_size]
 
     log_message(
         f"剩余 {len(remaining_ids)} 个待屏蔽用戶，本次计划处理 {len(task_list)} 个",

@@ -1,7 +1,7 @@
 settings:
-  limit_once_run: 400          # 单次拉黑数量，过多会触发平台 api 请求限制
+  batch_size: 400 # 单次拉黑数量，过多会触发平台 api 请求限制
 request:
-  rate_limit_interval: 5      # 请求间隔，单位：秒
-  timeout: 5                  # 超时时间，单位：秒
-  retry_times: 3              # 请求失败重试次数
-  retry_interval: 5           # 请求失败重试间隔，单位：秒
+  rate_limit_interval: 5 # 请求间隔，单位：秒
+  timeout: 5 # 超时时间，单位：秒
+  retry_times: 3 # 请求失败重试次数
+  retry_interval: 5 # 请求失败重试间隔，单位：秒

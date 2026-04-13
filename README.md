@@ -1,6 +1,6 @@
 # x-blocklist-importer
 
-x-blocklist-importer 帮助你将一个 x(twitter) 账号的黑名单导入另一个账号中
+x-blocklist-importer 能帮助你将一个 x(twitter) 账号的黑名单导入另一个账号中
 
 
 <div align="center">
